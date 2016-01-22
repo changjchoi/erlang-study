@@ -1,0 +1,35 @@
+#!/usr/bin/env escript
+%% -*- erlang -*-
+% change directory in the script ?
+% file:set_cwd("/media/D/www/qachina/db/doc/erlang")
+main(_) ->
+  % change directory
+  file:set_cwd("./org"),
+  % make and loading the object 
+  make:all([load]),
+  %code:load_file(db),
+  io:format("~p~n", [db:module_info()]),
+  Db = db:new(),
+  Db1 = db:write(t1, test1, Db),
+  Db2 = db:write(t2, test2, Db1),
+  try db:read(t1, Db2) of
+    ok -> ok
+  catch
+    _:_ -> io:format("Error Occurs~n")
+  end,
+  io:format("~p~n", [file:get_cwd()]),
+  % not equal is /= in erlang
+  Ok = file:set_cwd("../patch"),
+  io:format("~p~n", [Ok]),
+  if 
+    Ok /= ok -> io:format("cwd error~n");
+    true -> ok
+  end,
+  io:format("~p~n", [file:get_cwd()]),
+  make:all([load]),
+  code:load_file(db),
+  io:format("~p~n", [db:module_info()]),
+  %io:format("~p~n", [db:read(t1, Db2)]).
+  db:read(t1, Db2).
+
+
